@@ -16,7 +16,7 @@ def lsq(A,b,lam):
     return np.linalg.inv(A.T @ A + lam*np.eye(np.shape(A)[1])) @ A.T @ b
 
 
-def main():
+def test():
     X_faults = loadFaults()
     X_train_plus1 = X_faults[0][:int(np.shape(X_faults[0])[0]/2.0),:]
     X_train_minus1 = X_faults[1][:int(np.shape(X_faults[1])[0] / 2.0), :]
@@ -39,7 +39,7 @@ def main():
         print("Lam:",lam," Error:",sum(error_vec)/len(y_test))
 
 if __name__ == "__main__":
-    loadFaults()
+    test()
 
 
 
