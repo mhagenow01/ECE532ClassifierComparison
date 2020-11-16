@@ -14,7 +14,7 @@ def loadFaults():
     # todo: change to package directory
 
     data = np.loadtxt('./Data/Faults.csv',delimiter=',')
-    print(np.shape(data))
+    #print(np.shape(data))
 
     # First 27 attributes are the independent variables
     X = data[:,0:27]
@@ -22,11 +22,11 @@ def loadFaults():
     # Final 7 attributes are 1/0 for the type of fault
     Y = data[:,27:]
 
-    print(np.shape(X))
-    print(np.shape(Y))
-
-    # Confirms that each plate has only one type of fault
-    print(np.max(np.sum(Y,axis=1)))
+    # print(np.shape(X))
+    # print(np.shape(Y))
+    #
+    # # Confirms that each plate has only one type of fault
+    # print(np.max(np.sum(Y,axis=1)))
 
     X_faults = []
     for ii in range(0,7):
@@ -39,8 +39,8 @@ def loadFaults():
         fault_ind_temp = np.argmax(Y[ii,:])
         X_faults[fault_ind_temp] = np.vstack((X_faults[fault_ind_temp],X[ii,:]))
 
-    for ii in range(0,7):
-        print(ii,"-",np.shape(X_faults[ii]))
+    # for ii in range(0,7):
+    #     print(ii,"-",np.shape(X_faults[ii]))
 
     return X_faults
 
