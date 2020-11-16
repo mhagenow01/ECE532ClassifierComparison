@@ -15,10 +15,9 @@ from Code.PreProcessData import loadFaults
 from Code.LSQ import lsq
 
 # Calculate one vs all test results
-def onevall(X_train,X_reg,X_test,lams):
+def onevall(X_train,X_reg,X_test,lams,classfxn):
 
     num_class = len(X_train)
-    print("YO",np.shape(X_train[1]))
     best_ws = []
 
     # each type of classification
@@ -29,12 +28,11 @@ def onevall(X_train,X_reg,X_test,lams):
         # positive label is the 'one'
         X_train_plus1 = X_train[ii]
 
-        print("SUP ",np.shape(X_train_plus1))
 
         # negative label is the 'all' randomly downsampled to the same length as the positive
         X_train_minus1 = np.vstack([X_train[i] for i in range(0,num_class) if (i!=ii)])
         num_rand = np.shape(X_train_plus1)[0]
-        print(num_rand, "-*-", np.shape(X_train_minus1))
+
         indices_rand = np.random.choice(range(0,np.shape(X_train_minus1)[0]),num_rand,replace=False)
         X_train_minus1 = X_train_minus1[indices_rand,:]
 
@@ -48,7 +46,7 @@ def onevall(X_train,X_reg,X_test,lams):
         X_reg_test_plus1 = X_reg[ii]
         X_reg_test_minus1 = np.vstack([X_reg[i] for i in range(0, num_class) if (i != ii)])
         num_rand = np.shape(X_reg_test_plus1)[0]
-        print(num_rand,"---",np.shape(X_reg_test_minus1))
+
         indices_rand = np.random.choice(range(0, np.shape(X_reg_test_minus1)[0]), num_rand, replace=False)
         X_reg_test_minus1 = X_reg_test_minus1[indices_rand, :]
         X_reg_test = np.vstack((X_reg_test_minus1, X_reg_test_minus1))
@@ -56,7 +54,7 @@ def onevall(X_train,X_reg,X_test,lams):
             (np.ones((np.shape(X_reg_test_plus1)[0], 1)), -np.ones((np.shape(X_reg_test_minus1)[0], 1))))
 
         for lam in lams:
-            w = lsq(X_train_temp, y_train_temp, lam)
+            w = classfxn(X_train_temp, y_train_temp, lam)
 
             y_hat_reg = np.sign(X_reg_test @ w)
             error_vec = [0 if i[0] == i[1] else 1 for i in np.hstack((y_hat_reg, y_reg_test))]
@@ -95,7 +93,11 @@ def onevall(X_train,X_reg,X_test,lams):
 def main():
     X_faults = loadFaults()
     lams = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 1, 2, 5, 10.0, 20.0]
-    onevall(X_faults,X_faults,X_faults,lams)
+
+    # Run everything with least-squares
+    onevall(X_faults,X_faults,X_faults,lams,lsq)
+
+    # Run everything with SVM
 
 if __name__ == "__main__":
     loadFaults()
