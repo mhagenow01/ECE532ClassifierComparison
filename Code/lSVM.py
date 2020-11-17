@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-""" Gets the data from the UCI datasets and puts in a format
-to test with the implemented algorithms
+""" Computes the weights for a linear SVM binary classifer
  Created: 11/10/2020
 """
 
@@ -12,8 +11,36 @@ from PreProcessData import loadFaults
 
 # Calculate the solution to the regularized least squares solution using ridge regression
 # e.g., Tikhonov regularization
-def lsq(A,b,lam):
-    return np.linalg.inv(A.T @ A + lam*np.eye(np.shape(A)[1])) @ A.T @ b
+def lsvm(A,b,lam,tau=None,tol=None):
+
+    if(tol is None):
+        tol = 0.001
+    if(tau is None):
+        U, s, vt = np.linalg.svd(A)
+        tau = 0.75/(s[0]**2)
+    # Set up the gradient descent
+    w = np.zeros((np.shape(A)[1],))
+    w = np.array([-0.35617674,-0.12623986, 1.66456267])
+    not_converged = True
+
+    max_iters = 500
+    num_iterations = 0
+    while(not_converged and num_iterations<max_iters):
+        w_old = w
+        w = w-tau*subgrad(w,lam,b,A)
+        print(np.linalg.norm(w-w_old))
+        if(np.linalg.norm(w-w_old)<tol):
+            not_converged=False
+        num_iterations = num_iterations + 1
+    return w
+
+def subgrad(w,lam,y,X):
+    subgradval=0.0
+    for ii in range(0,np.shape(X)[0]):
+        if((y[ii] * X[ii,:] @ w)<1.0):
+            subgradval = subgradval - y[ii] * X[ii,:].T
+    subgradval = subgradval + 2*lam*w
+    return subgradval
 
 
 def test():
@@ -23,10 +50,10 @@ def test():
     X_train = np.vstack((X_train_plus1,X_train_minus1))
     y_train = np.vstack((np.ones((np.shape(X_train_plus1)[0],1)),-np.ones((np.shape(X_train_minus1)[0],1))))
 
-    for lam in [0.0, 0.1, 0.2, 5000000000.0]:
+    for lam in [0.0, 0.1, 0.2]:
         # print(np.shape(X_train))
         # print(np.shape(y_train))
-        w = lsq(X_train,y_train,lam)
+        w = lsvm(X_train,y_train,lam)
         # print("w:",w)
 
         X_test_plus1 = X_faults[0][int(np.shape(X_faults[0])[0] / 2.0):, :]
