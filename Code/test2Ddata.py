@@ -37,12 +37,15 @@ def test():
     print("w2:",w2)
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('LSQ and SVM Unit Tests')
 
     ax1.scatter(X_plus[:,0],X_plus[:,1],color='r')
     ax1.scatter(X_minus[:,0],X_minus[:,1],color='b')
-    ax1.plot([1.0, 3.0],[-w[2]/w[1]-w[0]/w[1]*1.0, -w[2]/w[1]-w[0]/w[1]*3.0], color='g')
-    ax1.plot([1.0, 3.0],[-w2[2]/w2[1]-w2[0]/w2[1]*1.0, -w2[2]/w2[1]-w2[0]/w2[1]*3.0], color='y')
+    ax1.plot([1.0, 3.0],[-w[2]/w[1]-w[0]/w[1]*1.0, -w[2]/w[1]-w[0]/w[1]*3.0], color='g',label='lsq')
+    ax1.plot([1.0, 3.0],[-w2[2]/w2[1]-w2[0]/w2[1]*1.0, -w2[2]/w2[1]-w2[0]/w2[1]*3.0], color='y', label='svm')
+    ax1.legend()
     ax1.axis("equal")
+    ax1.set(xlabel='x1', ylabel='x2')
 
     X_plus = np.array([[1.0, 7.0, 1.0],
                        [2.0, 5.0, 1.0],
@@ -67,9 +70,11 @@ def test():
 
     ax2.scatter(X_plus[:, 0], X_plus[:, 1], color='r')
     ax2.scatter(X_minus[:, 0], X_minus[:, 1], color='b')
-    ax2.plot([1.0, 3.0], [-w[2] / w[1] - w[0] / w[1] * 1.0, -w[2] / w[1] - w[0] / w[1] * 3.0], color='g')
-    ax2.plot([1.0, 3.0], [-w2[2] / w2[1] - w2[0] / w2[1] * 1.0, -w2[2] / w2[1] - w2[0] / w2[1] * 3.0], color='y')
+    ax2.plot([1.0, 3.0], [-w[2] / w[1] - w[0] / w[1] * 1.0, -w[2] / w[1] - w[0] / w[1] * 3.0], color='g', label='lsq')
+    ax2.plot([1.0, 3.0], [-w2[2] / w2[1] - w2[0] / w2[1] * 1.0, -w2[2] / w2[1] - w2[0] / w2[1] * 3.0], color='y', label='svm')
+    ax2.legend()
     ax2.axis("equal")
+    ax2.set(xlabel='x1', ylabel='x2')
 
     plt.show()
 
