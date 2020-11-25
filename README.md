@@ -11,6 +11,14 @@ All of the executable code lies in the /Code/ directory and was written in Pytho
 
 The original datasets have been converted to csv files and are preprocessed into numpy-friendly arrays in the included PreProcessData.py scripts.
 
+#### Requirements
+* Python 3 (tested on 3.6.9)
+* Numpy (tested on 1.18.5)
+* PyTorch
+
+#### Usage
+Regression analysis using Steel Plate faults:
+
 
 
 #### Specific File Functions
