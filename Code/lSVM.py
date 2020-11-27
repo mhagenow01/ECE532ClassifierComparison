@@ -18,13 +18,37 @@ def lsvm(A,b,lam,tau=None,tol=None):
         U, s, vt = np.linalg.svd(A)
         tau = 0.75/(s[0]**2)
 
-    print("s0:",s[0])
+    #print("s0:",s[0])
 
     # Set up the gradient descent
     w = np.zeros((np.shape(A)[1],))
     not_converged = True
 
-    max_iters = 10000
+    max_iters = 100
+    num_iterations = 0
+    while(not_converged and num_iterations<max_iters):
+        w_old = w
+        w = w-tau*subgrad(w,lam,b,A)
+        #print(np.linalg.norm(w-w_old))
+        if(np.linalg.norm(w-w_old)<tol):
+            not_converged=False
+        num_iterations = num_iterations + 1
+    return w.reshape((len(w)),1)
+
+def wlsvm(A,w,b,lam,tau=None,tol=None):
+    if(tol is None):
+        tol = 0.001
+    if(tau is None):
+        U, s, vt = np.linalg.svd(A)
+        tau = 0.75/(s[0]**2)
+
+    # print("s0:",s[0])
+
+    # Set up the gradient descent
+    w = np.zeros((np.shape(A)[1],))
+    not_converged = True
+
+    max_iters = 100
     num_iterations = 0
     while(not_converged and num_iterations<max_iters):
         w_old = w
