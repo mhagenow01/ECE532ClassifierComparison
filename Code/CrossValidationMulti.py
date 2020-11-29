@@ -17,7 +17,8 @@ from OnevAll import onevall
 # Create the sets for the cross validation
 # divided into training segments, regularization segments, and validation segments
 def crossValidation(X_faults,num_segs,lams,classfxn):
-
+    acc_total = 0.0
+    total_runs = 0
     for ii in range(0, num_segs):  # set for determining which regularization parameter
         for jj in range(0, num_segs):  # validation set
             if ii == jj:
@@ -44,11 +45,16 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
                 X_test.append(X_test_temp)
              
              # Run the one vs all classification for this set
-            onevall(X_training, X_reg, X_test, lams, classfxn)
+            acc = onevall(X_training, X_reg, X_test, lams, classfxn)
+            acc_total = acc_total + acc
+            total_runs = total_runs + 1
+
+    print("Overall Classification Accuracy: ",acc_total/total_runs)
 
 def main():
     X_faults = loadFaults()
-    crossValidation(X_faults,4,[0.0],wlsq)
+    lam = np.logspace(-5,-2,20)
+    crossValidation(X_faults,4,lam,wlsq)
 
 
 if __name__ == "__main__":

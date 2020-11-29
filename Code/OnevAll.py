@@ -16,6 +16,8 @@ from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
 
 # Calculate one vs all test results
+# to deal with unequal class sizes, this method downsamples the
+# 'all' data to be the same size as the 'one' set
 def onevall_downsample(X_train,X_reg,X_test,lams,classfxn):
 
     num_class = len(X_train)
@@ -164,10 +166,11 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
                 correct = correct + 1
                 correct_per_class = correct_per_class + 1
 
-        print("per class correct ",ii,":",correct_per_class/total_class)
-    print("correct:",correct)
-    print("total:",total)
-    print("classification accuracy:",correct/total)
+    #     print("per class correct ",ii,":",correct_per_class/total_class)
+    # print("correct:",correct)
+    # print("total:",total)
+    # print("classification accuracy:",correct/total)
+    return correct/total
 
 
 def main():
