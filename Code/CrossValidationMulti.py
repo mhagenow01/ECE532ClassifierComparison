@@ -10,7 +10,7 @@ __author__ = "Mike Hagenow"
 
 import numpy as np
 from PreProcessData import loadFaults
-from LSQ import lsq
+from LSQ import lsq, wlsq
 from lSVM import lsvm
 from OnevAll import onevall
 
@@ -48,7 +48,7 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
 
 def main():
     X_faults = loadFaults()
-    crossValidation(X_faults,4,[0.0],lsq)
+    crossValidation(X_faults,4,[0.0],wlsq)
 
 
 if __name__ == "__main__":
