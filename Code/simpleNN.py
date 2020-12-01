@@ -26,57 +26,75 @@ import copy
 class SimpleNN(nn.Module):
     def __init__(self,num_features):
         super(SimpleNN, self).__init__() # call default network constructor
-        self.fc1 = torch.nn.Linear(num_features,100)
-        self.fc2 = torch.nn.Linear(100,1)
+        self.fc1 = torch.nn.Linear(num_features,1000)
+        self.fc2 = torch.nn.Linear(1000,1000)
+        self.fc3 = torch.nn.Linear(1000,1)
     def forward(self,x):
         x = F.relu(self.fc1(x))
-        x = F.sigmoid(self.fc2(x))
+        # x = F.relu(self.fc2(x))
+        x = F.sigmoid(self.fc3(x))
         return x
 
 
-def nn(A,b,lam):
+def nn(A,b):
     # create an instance of the network
     net = SimpleNN(np.shape(A)[1])
-    batch_size = 1400
 
     # create the optimizer
-    optimizer = optim.SGD(net.parameters(), lr=0.001)
+    optimizer = optim.Adam(net.parameters(), lr=0.01)
 
     # Run epochs
 
     init_weights = copy.deepcopy(net.fc1.weight.data)
 
-    for ii in range(0,1000):
-        rand_ind = np.random.choice(np.shape(A)[0],batch_size)
-        network_in = A[rand_ind,:]
-        network_target = b[rand_ind]
+    for ii in range(0,5000):
+        network_in = A
+        network_target = b
 
         optimizer.zero_grad()  # zero the gradient buffers
-        output = net.forward(torch.from_numpy(network_in).float())
-        loss = torch.nn.functional.mse_loss(output, torch.from_numpy(network_target).float())
+        output = net.forward(torch.Tensor(network_in))
+        loss = torch.nn.functional.mse_loss(output, torch.Tensor(network_target))
         loss.backward()
         optimizer.step()  # Does the update
-        print("Epoch:", ii, "Training Loss: ",loss.item())
+        if ii%500==0:
+            print("Epoch:", ii, "Training Loss: ",loss.item())
         # print(net.fc1.weight.grad)
 
-    print("Testing the Network!!")
-    # print(net.forward(torch.from_numpy(A).float()).detach().numpy())
-    # print(torch.from_numpy(A).float())
-    print(init_weights)
-    final_weights = net.fc1.weight.data
-    print(final_weights)
+    # print("Testing the Network!!")
+    # # print(net.forward(torch.from_numpy(A).float()).detach().numpy())
+    # # print(torch.from_numpy(A).float())
+    # print(init_weights)
+    # final_weights = net.fc1.weight.data
+    # print(final_weights)
     val = net.forward(torch.from_numpy(A).float()).detach().numpy()
-    print(val)
+    val_bool = np.array([0.0 if i<0.5 else 1.0 for i in val]).reshape((len(val),1))
 
-    # error_vec = [0 if i[0] == i[1] else 1 for i in np.hstack((, b))]
-    # print("Error:",sum(error_vec) / len(b))
-    # print(b)
+    # print(torch.Tensor(network_target))
+    # print(network_target)
+
+    error_vec = [0 if i[0] == i[1] else 1 for i in np.hstack((val_bool,b))]
+    print("Error:",sum(error_vec) / len(b))
+
+    return copy.deepcopy(net)
+
+
+def nnMultliClass():
+    print("hello")
+
+
+
+
+def compareNN():
+    # create a hold-out set with approx 20 percent of the data
+    X_faults = loadFaults()
+    num_class = len(X_faults)
+
 
 
 def test():
     X_faults = loadFaults()
     num_class = len(X_faults)
-    ii = 3
+    ii = 6
 
     # positive label is the 'one'
     X_train_plus1 = X_faults[ii]

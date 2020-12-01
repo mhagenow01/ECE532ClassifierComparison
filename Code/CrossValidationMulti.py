@@ -11,7 +11,7 @@ __author__ = "Mike Hagenow"
 import numpy as np
 from PreProcessData import loadFaults
 from LSQ import lsq, wlsq
-from lSVM import lsvm
+from lSVM import lsvm, wlsvm
 from OnevAll import onevall
 
 # Create the sets for the cross validation
@@ -54,7 +54,9 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
 def main():
     X_faults = loadFaults()
     lam = np.logspace(-5,-2,20)
-    crossValidation(X_faults,4,lam,wlsq)
+    lam = [0.0]
+    crossValidation(X_faults,10,lam,wlsq)
+    crossValidation(X_faults,10,lam,wlsvm)
 
 
 if __name__ == "__main__":
