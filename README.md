@@ -21,8 +21,8 @@ Regression analysis using Steel Plate faults:
 
 |    | wLSQ | wSVM | NN|  
 | ------------- | ------------- | ------------- | ------------- |
-| Training Data  | 0.1  | 0.1 | 0.1 |
-| Cross Validation (n = 5)  | 0.1 | 0.1 | 0.1 |
+| Training Data  | 0.684  | 0.423 | 0.933 |
+| Cross Validation (n = 5)  | 0.585 | 0.403 | 0.583 |
 
 
 #### Specific File Functions
