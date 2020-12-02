@@ -12,7 +12,8 @@ import numpy as np
 from PreProcessData import loadFaults
 from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
-from OnevAll import onevall
+from simpleNN import nn
+from OnevAll import onevall, onevallNN
 
 # Create the sets for the cross validation
 # divided into training segments, regularization segments, and validation segments
@@ -21,6 +22,7 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
     total_runs = 0
     for ii in range(0, num_segs):  # set for determining which regularization parameter
         for jj in range(0, num_segs):  # validation set
+            print("RUN: ",ii, " - ", jj)
             if ii == jj:
                 continue
 
@@ -45,18 +47,23 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
                 X_test.append(X_test_temp)
              
              # Run the one vs all classification for this set
-            acc = onevall(X_training, X_reg, X_test, lams, classfxn)
+            if classfxn is not nn:
+                acc = onevall(X_training, X_reg, X_test, lams, classfxn)
+            else:
+                print("NERD YO YO")
+                acc = onevallNN(X_training, X_reg, X_test)
             acc_total = acc_total + acc
             total_runs = total_runs + 1
 
-    print("Overall Classification Accuracy: ",acc_total/total_runs)
+    print("Overall Classification Accuracy (",str(classfxn),"): ",acc_total/total_runs)
 
 def main():
     X_faults = loadFaults()
     lam = np.logspace(-5,-2,20)
     lam = [0.0]
-    crossValidation(X_faults,10,lam,wlsq)
-    crossValidation(X_faults,10,lam,wlsvm)
+    crossValidation(X_faults,5,lam,wlsq)
+    crossValidation(X_faults,5,lam,wlsvm)
+    crossValidation(X_faults,5,lam,nn)
 
 
 if __name__ == "__main__":
