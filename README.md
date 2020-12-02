@@ -5,7 +5,7 @@ In this work, the performance of several classifiers is assessed on two public d
 The classifers that are analyzed include:
 * Least Squares (including Tikhonov regularization) - implemented both in analytical closed form and using gradient descent
 * Support Vector Machines  - implemented using gradient descent
-* Simple Feed-forward neural network using PyTorch
+* Simple Feed-forward neural network using PyTorch (1 hidden layer with 1000 Nodes)
 
 All of the executable code lies in the /Code/ directory and was written in Python3.
 
@@ -19,11 +19,16 @@ The original datasets have been converted to csv files and are preprocessed into
 #### Usage
 Regression analysis using Steel Plate faults:
 
+|    | wLSQ | wSVM | NN|  
+| ------------- | ------------- | ------------- | ------------- |
+| Training Data  | 0.1  | 0.1 | 0.1 |
+| Cross Validation (n = 5)  | 0.1 | 0.1 | 0.1 |
 
 
 #### Specific File Functions
 * LSQ.py - includes implementation and testing code for least squares routines
 * lSVM.py - includes implementation and testing code for support vector machines
+* simpleNN.py - includes implementation for a custom neural network structure using Pytorch (Adam Solver, ReLu + Sigmoid - 1 hidden layer)
 * OnevAll.py - intended to be called by a cross validation routine. Performs one vs all testing for
 a given training, regularization test, and test set.
 * PreProcessData.py - reads csv files, peforms basic preprocessing such as normalization of data columns (to account for vastly different units), and stores data in numpy arrays
