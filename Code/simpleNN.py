@@ -47,7 +47,7 @@ def nn(A,b):
 
     init_weights = copy.deepcopy(net.fc1.weight.data)
 
-    for ii in range(0,5000):
+    for ii in range(0,250):
         network_in = A
         network_target = b
 
@@ -56,7 +56,7 @@ def nn(A,b):
         loss = torch.nn.functional.mse_loss(output, torch.Tensor(network_target))
         loss.backward()
         optimizer.step()  # Does the update
-        if ii%500==0:
+        if ii%1000==0:
             print("Epoch:", ii, "Training Loss: ",loss.item())
         # print(net.fc1.weight.grad)
 

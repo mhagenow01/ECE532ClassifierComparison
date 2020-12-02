@@ -210,10 +210,10 @@ def onevallNN(X_train,X_reg,X_test):
             # for each data point, get the most clear correct value (aka, highest value)
             correct_class = ii
             best_val = -np.inf
-            print("correct class: ",correct_class)
+            # print("correct class: ",correct_class)
             for kk in range(0,num_class):
                 temp = best_nns[kk].forward(torch.Tensor(X_test[ii][jj,:]))
-                print("  -",kk,"-",temp)
+                # print("  -",kk,"-",temp)
                 if temp > best_val:
                     best_val=temp
                     best_class = kk

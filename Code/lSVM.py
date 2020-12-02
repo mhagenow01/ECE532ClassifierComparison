@@ -52,7 +52,7 @@ def wlsvm(A,w_samples,b,lam,tau=None,tol=None):
     num_iterations = 0
     while(not_converged and num_iterations<max_iters):
         w_old = w
-        w = w-tau*subgrad(w,lam,b,A,w_samples)
+        w = w-tau*wsubgrad(w,lam,b,A,w_samples)
         #print(np.linalg.norm(w-w_old))
         if(np.linalg.norm(w-w_old)<tol):
             not_converged=False
