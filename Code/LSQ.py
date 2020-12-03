@@ -28,6 +28,38 @@ def wlsq(A,w,b,lam):
     return np.linalg.inv(A.T @ W @ A + lam*np.eye(np.shape(A)[1])) @ A.T @ W @ b
 
 
+def wlsqGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
+    if (tol is None):
+        tol = 0.001
+    if (tau is None):
+        U, s, vt = np.linalg.svd(A)
+        tau = 0.75 / (s[0] ** 2)
+
+    # print("s0:",s[0])
+
+    # Set up the gradient descent
+    w = np.zeros((np.shape(A)[1],))
+    not_converged = True
+
+    max_iters = 100
+    num_iterations = 0
+    while (not_converged and num_iterations < max_iters):
+        w_old = w
+        w = w - tau * wgradlsq(w, lam, b, A, w_samples, reg=reg)
+        # print(np.linalg.norm(w-w_old))
+        if (np.linalg.norm(w - w_old) < tol):
+            not_converged = False
+        num_iterations = num_iterations + 1
+    return w.reshape((len(w)), 1)
+
+def wgradlsq(w,lam,y,X, w_samples):
+    subgradval=np.zeros(np.shape(w))
+    for ii in range(0,np.shape(X)[0]):
+        if((y[ii] * X[ii,:] @ w)<1.0):
+            subgradval = subgradval - w_samples[ii]*y[ii] * X[ii,:].T
+    subgradval = subgradval + 2*lam*w
+    return subgradval
+
 def test():
     X_faults = loadFaults()
     X_train_plus1 = X_faults[0][:int(np.shape(X_faults[0])[0]/2.0),:]
