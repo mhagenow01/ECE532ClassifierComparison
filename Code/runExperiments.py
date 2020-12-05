@@ -21,6 +21,11 @@ from simpleNN import nn
 def noRegFiveFoldClassification():
     X_faults = loadFaults()
     lam = [0.0]
+
+    print("\n\n------------------------")
+    print("| Running Cross Validation |")
+    print("------------------------")
+
     crossValidation(X_faults, 5, lam, wlsq)
     crossValidation(X_faults, 5, lam, wlsvm)
     crossValidation(X_faults, 5, lam, nn)

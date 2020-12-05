@@ -30,9 +30,9 @@ class SimpleNN(nn.Module):
         self.fc2 = torch.nn.Linear(1000,1000)
         self.fc3 = torch.nn.Linear(1000,1)
     def forward(self,x):
-        x = F.relu(self.fc1(x))
-        # x = F.relu(self.fc2(x))
-        x = F.sigmoid(self.fc3(x))
+        x = torch.relu(self.fc1(x))
+        # x = torch.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
         return x
 
 
@@ -47,7 +47,7 @@ def nn(A,b):
 
     init_weights = copy.deepcopy(net.fc1.weight.data)
 
-    for ii in range(0,250):
+    for ii in range(0,5000):
         network_in = A
         network_target = b
 
@@ -56,8 +56,8 @@ def nn(A,b):
         loss = torch.nn.functional.mse_loss(output, torch.Tensor(network_target))
         loss.backward()
         optimizer.step()  # Does the update
-        if ii%1000==0:
-            print("Epoch:", ii, "Training Loss: ",loss.item())
+        # if ii%1000==0:
+        #     print("Epoch:", ii, "Training Loss: ",loss.item())
         # print(net.fc1.weight.grad)
 
     # print("Testing the Network!!")
@@ -73,7 +73,7 @@ def nn(A,b):
     # print(network_target)
 
     error_vec = [0 if i[0] == i[1] else 1 for i in np.hstack((val_bool,b))]
-    print("Error:",sum(error_vec) / len(b))
+    # print("Error:",sum(error_vec) / len(b))
 
     return copy.deepcopy(net)
 

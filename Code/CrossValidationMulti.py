@@ -9,6 +9,7 @@ given set of multiclass data to be used for the one vs all testing
 __author__ = "Mike Hagenow"
 
 import numpy as np
+from tqdm import tqdm
 from PreProcessData import loadFaults
 from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
@@ -20,9 +21,12 @@ from OnevAll import onevall, onevallNN
 def crossValidation(X_faults,num_segs,lams,classfxn):
     acc_total = 0.0
     total_runs = 0
-    for ii in range(0, num_segs):  # set for determining which regularization parameter
-        for jj in range(0, num_segs):  # validation set
-            print("RUN: ",ii, " - ", jj)
+    acc_per_class = np.zeros((len(X_faults)))
+
+    print("\n\nRunning Cross Validation (",num_segs," sets) for ",classfxn.__name__,"\n")
+
+    for ii in tqdm(range(0, num_segs)):  # set for determining which regularization parameter
+        for jj in tqdm(range(0, num_segs)):  # validation set
             if ii == jj:
                 continue
 
@@ -48,14 +52,19 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
              
              # Run the one vs all classification for this set
             if classfxn is not nn:
-                acc = onevall(X_training, X_reg, X_test, lams, classfxn)
+                acc, acc_per_class_temp = onevall(X_training, X_reg, X_test, lams, classfxn)
             else:
-                print("NERD YO YO")
-                acc = onevallNN(X_training, X_reg, X_test)
+                acc, acc_per_class_temp = onevallNN(X_training, X_reg, X_test)
             acc_total = acc_total + acc
+
+            for aa in range(0,len(acc_per_class_temp)):
+                acc_per_class[aa] = acc_per_class[aa] + acc_per_class_temp[aa]
+
             total_runs = total_runs + 1
 
-    print("Overall Classification Accuracy (",str(classfxn),"): ",acc_total/total_runs)
+    print("\nOverall Classification Accuracy (",classfxn.__name__,"): ",acc_total/total_runs)
+    for ii in range(0,len(X_faults)):
+        print("   class ",ii,": ",acc_per_class[ii]/total_runs)
 
 def main():
     X_faults = loadFaults()

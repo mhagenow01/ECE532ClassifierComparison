@@ -75,8 +75,12 @@ def onevall_downsample(X_train,X_reg,X_test,lams,classfxn):
 
     # With the test set, determine the overall classification error
     correct = 0
+    correct_per_class = []
+
     total = 0
     for ii in range(0,num_class):
+        correct_per_class_temp = 0
+        total_per_class_temp = np.shape(X_test[ii])[0]
         total = total + np.shape(X_test[ii])[0]
         for jj in range(0,np.shape(X_test[ii])[0]):
             # for each data point, get the most clear correct value (aka, highest value)
@@ -92,6 +96,7 @@ def onevall_downsample(X_train,X_reg,X_test,lams,classfxn):
             # print("BC:",best_class, " CC:",correct_class)
             if(best_class==correct_class):
                 correct = correct + 1
+                correct_per_class + 1
 
     print("correct:",correct)
     print("total:",total)
@@ -149,6 +154,7 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
 
     # With the test set, determine the overall classification error
     correct = 0
+    acc_per_class = []
     total = 0
     for ii in range(0,num_class):
         total = total + np.shape(X_test[ii])[0]
@@ -168,11 +174,11 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
                 correct = correct + 1
                 correct_per_class = correct_per_class + 1
 
-    #     print("per class correct ",ii,":",correct_per_class/total_class)
+        acc_per_class.append(correct_per_class/total_class)
     # print("correct:",correct)
     # print("total:",total)
     # print("classification accuracy:",correct/total)
-    return correct/total
+    return correct/total, acc_per_class
 
 # Calculate one vs all test results
 # using a weighting matrix to address the uneven class instances
@@ -201,6 +207,7 @@ def onevallNN(X_train,X_reg,X_test):
 
     # With the test set, determine the overall classification error
     correct = 0
+    acc_per_class = []
     total = 0
     for ii in range(0,num_class):
         total = total + np.shape(X_test[ii])[0]
@@ -222,11 +229,11 @@ def onevallNN(X_train,X_reg,X_test):
                 correct = correct + 1
                 correct_per_class = correct_per_class + 1
 
-    #     print("per class correct ",ii,":",correct_per_class/total_class)
+        acc_per_class.append(correct_per_class / total_class)
     # print("correct:",correct)
     # print("total:",total)
     # print("classification accuracy:",correct/total)
-    return correct/total
+    return correct/total, acc_per_class
 
 
 def main():
