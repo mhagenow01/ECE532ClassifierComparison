@@ -123,7 +123,11 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
 
         X_train_temp = np.vstack((X_train_plus1, X_train_minus1))
         y_train_temp = np.vstack((np.ones((np.shape(X_train_plus1)[0], 1)), -np.ones((np.shape(X_train_minus1)[0], 1))))
+
+        # Weights
         w_train_temp = np.vstack((1.0/(np.shape(X_train_plus1)[0])*np.ones((np.shape(X_train_plus1)[0], 1)), 1.0/(np.shape(X_train_minus1)[0])*np.ones((np.shape(X_train_minus1)[0], 1))))
+        w_train_temp = w_train_temp/np.max(w_train_temp)
+
 
         # Create a set for evaluating the regularization parameters
         X_reg_test_plus1 = X_reg[ii]
