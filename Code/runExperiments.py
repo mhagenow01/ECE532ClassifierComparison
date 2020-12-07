@@ -30,9 +30,39 @@ def noRegFiveFoldClassification():
     crossValidation(X_faults, 5, lam, wlsvm)
     crossValidation(X_faults, 5, lam, nn)
 
+
+
+def effectRegularizationLSQ_SVM():
+    X_faults = loadFaults()
+    lams = np.logspace(-6,3,40)
+
+    print("\n\n------------------------------")
+    print("| Running Regularization Analysis |")
+    print("-----------------------------------")
+
+    results_lsq = []
+    results_svm = []
+
+    for ii in range(0,len(lams)):
+        results_lsq.append(crossValidation(X_faults, 5, [lams[ii]], wlsq))
+        results_svm.append(crossValidation(X_faults, 5, [lams[ii]], wlsvm))
+
+    print("\n\n------------------------------")
+    print("| Overall Best Classification     |")
+    print("-----------------------------------")
+    crossValidation(X_faults, 5, lams, wlsq)
+    crossValidation(X_faults, 5, lams, wlsvm)
+
+    print("Results for Each Regularizer:")
+    print(results_lsq)
+    print(results_svm)
+
+
 def runEvaluations(testname):
     if testname == "genclass":
         noRegFiveFoldClassification()
+    if testname == "regTestl2":
+        effectRegularizationLSQ_SVM()
     else:
         print("Test [",testname,"] Not Found")
 
