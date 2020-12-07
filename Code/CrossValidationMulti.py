@@ -66,6 +66,8 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
     for ii in range(0,len(X_faults)):
         print("   class ",ii,": ",acc_per_class[ii]/total_runs)
 
+    return acc_total/total_runs
+
 def main():
     X_faults = loadFaults()
     lam = np.logspace(-5,-2,20)
