@@ -11,6 +11,7 @@ import sys
 import numpy as np
 from PreProcessData import loadFaults
 from CrossValidationMulti import crossValidation
+from OnevAll import onevall, onevallNN
 
 # Import the classifier models
 from LSQ import lsq, wlsq
@@ -28,7 +29,27 @@ def noRegFiveFoldClassification():
 
     crossValidation(X_faults, 5, lam, wlsq)
     crossValidation(X_faults, 5, lam, wlsvm)
-    crossValidation(X_faults, 5, lam, nn)
+    # crossValidation(X_faults, 5, lam, nn)
+
+def trainingAcc():
+    X_faults = loadFaults()
+    lam = [0.0]
+
+    print("\n\n---------------------------------")
+    print("| Running One v All on Training Set |")
+    print("-------------------------------------")
+
+    # Run everything with the neural network
+    overall_acc = onevallNN(X_faults, X_faults, X_faults)
+    print("Neural Network Classification Accuracy: ", overall_acc)
+
+    # Run everything with least-squares
+    overall_acc = onevall(X_faults, X_faults, X_faults, lam, wlsq)
+    print("wLSQ Classification Accuracy:", overall_acc)
+
+    # Run everything with SVM
+    overall_acc = onevall(X_faults, X_faults, X_faults, lam, wlsvm)
+    print("SVM Classification Accuracy: ", overall_acc)
 
 
 
@@ -61,8 +82,10 @@ def effectRegularizationLSQ_SVM():
 def runEvaluations(testname):
     if testname == "genclass":
         noRegFiveFoldClassification()
-    if testname == "regTestl2":
+    elif testname == "regTestl2":
         effectRegularizationLSQ_SVM()
+    elif testname == "trainingAcc":
+        trainingAcc()
     else:
         print("Test [",testname,"] Not Found")
 
