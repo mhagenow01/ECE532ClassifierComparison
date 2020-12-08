@@ -55,7 +55,7 @@ def trainingAcc():
 
 def effectRegularizationLSQ_SVM():
     X_faults = loadFaults()
-    lams = np.logspace(-6,3,40)
+    lams = np.logspace(-6,1,25)
 
     print("\n\n------------------------------")
     print("| Running Regularization Analysis |")
@@ -65,6 +65,9 @@ def effectRegularizationLSQ_SVM():
     results_svm = []
 
     for ii in range(0,len(lams)):
+        print("\n\n------------------------------")
+        print("| LAM ",ii," of ",len(lams)," |")
+        print("-----------------------------------")
         results_lsq.append(crossValidation(X_faults, 5, [lams[ii]], wlsq))
         results_svm.append(crossValidation(X_faults, 5, [lams[ii]], wlsvm))
 

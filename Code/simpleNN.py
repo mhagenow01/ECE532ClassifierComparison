@@ -35,6 +35,17 @@ class SimpleNN(nn.Module):
         x = torch.sigmoid(self.fc3(x))
         return x
 
+class MutliClassNN(nn.Module):
+    def __init__(self,num_features,num_labels):
+        super(SimpleNN, self).__init__() # call default network constructor
+        self.fc1 = torch.nn.Linear(num_features,1000)
+        self.fc2 = torch.nn.Linear(1000,1000)
+        self.fc3 = torch.nn.Linear(1000,num_labels)
+    def forward(self,x):
+        x = torch.relu(self.fc1(x))
+        # x = torch.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
+        return x
 
 def nn(A,b):
     # create an instance of the network
@@ -78,8 +89,29 @@ def nn(A,b):
     return copy.deepcopy(net)
 
 
-def nnMultliClass():
-    print("hello")
+def nnMultliClass(A,b):
+    # create an instance of the network
+    net = SimpleNN(np.shape(A)[1])
+
+    # create the optimizer
+    optimizer = optim.Adam(net.parameters(), lr=0.01)
+
+    # Run epochs
+
+    init_weights = copy.deepcopy(net.fc1.weight.data)
+
+    for ii in range(0, 5000):
+        network_in = A
+        network_target = b
+
+        optimizer.zero_grad()  # zero the gradient buffers
+        output = net.forward(torch.Tensor(network_in))
+        loss = torch.nn.functional.mse_loss(output, torch.Tensor(network_target))
+        loss.backward()
+        optimizer.step()  # Does the update
+        # if ii%1000==0:
+        #     print("Epoch:", ii, "Training Loss: ",loss.item())
+        # print(net.fc1.weight.grad)
 
 
 

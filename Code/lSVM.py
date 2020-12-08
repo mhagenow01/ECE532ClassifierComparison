@@ -24,7 +24,7 @@ def lsvm(A,b,lam,tau=None,tol=None):
     w = np.zeros((np.shape(A)[1],))
     not_converged = True
 
-    max_iters = 100
+    max_iters = 500
     num_iterations = 0
     while(not_converged and num_iterations<max_iters):
         w_old = w
@@ -40,7 +40,7 @@ def wlsvm(A,w_samples,b,lam,tau=None,tol=None):
         tol = 0.001
     if(tau is None):
         U, s, vt = np.linalg.svd(A)
-        tau = 0.75/(s[0]**2)
+        tau = 1.0/(s[0]**2)
 
     # print("s0:",s[0])
 
@@ -48,7 +48,7 @@ def wlsvm(A,w_samples,b,lam,tau=None,tol=None):
     w = np.zeros((np.shape(A)[1],))
     not_converged = True
 
-    max_iters = 100
+    max_iters = 250
     num_iterations = 0
     while(not_converged and num_iterations<max_iters):
         w_old = w
