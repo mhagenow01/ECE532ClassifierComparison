@@ -52,13 +52,47 @@ def wlsqGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
         num_iterations = num_iterations + 1
     return w.reshape((len(w)), 1)
 
-def wgradlsq(w,lam,y,X, w_samples):
+
+def wgradlsq(w,lam,y,X, w_samples, reg='l2'):
     subgradval=np.zeros(np.shape(w))
     for ii in range(0,np.shape(X)[0]):
         if((y[ii] * X[ii,:] @ w)<1.0):
             subgradval = subgradval - w_samples[ii]*y[ii] * X[ii,:].T
-    subgradval = subgradval + 2*lam*w
+    if reg=='l2':
+        subgradval = subgradval + 2*lam*w
+    else:
+        subgradval = subgradval # no regularization
     return subgradval
+
+def wlsqPGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
+    if (tol is None):
+        tol = 0.001
+    if (tau is None):
+        U, s, vt = np.linalg.svd(A)
+        tau = 0.75 / (s[0] ** 2)
+
+    # print("s0:",s[0])
+
+    # Set up the gradient descent
+    w = np.zeros((np.shape(A)[1],))
+    not_converged = True
+
+    max_iters = 100
+    num_iterations = 0
+    while (not_converged and num_iterations < max_iters):
+        w_old = w
+
+        # Step in the gradient direction
+        w = w - tau * wgradlsq(w, lam, b, A, w_samples, reg='None')
+
+        # Regularization Step
+        for ii in range(0,len(w)):
+            w[ii] = (np.abs(w[ii])-(lam*tau/2)*float(np.abs(w[ii])-(lam*tau/2))>0) * np.sign(w[ii])
+
+        if (np.linalg.norm(w - w_old) < tol):
+            not_converged = False
+        num_iterations = num_iterations + 1
+    return w.reshape((len(w)), 1)
 
 def test():
     X_faults = loadFaults()
