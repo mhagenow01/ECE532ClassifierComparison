@@ -9,7 +9,7 @@ __author__ = "Mike Hagenow"
 
 import sys
 import numpy as np
-from PreProcessData import loadFaults
+from PreProcessData import loadFaults, loadMocap
 from CrossValidationMulti import crossValidation
 from OnevAll import onevall, onevallNN
 import torch
@@ -51,8 +51,6 @@ def trainingAcc():
     # Run everything with SVM
     overall_acc = onevall(X_faults, X_faults, X_faults, lam, wlsvm)
     print("SVM Classification Accuracy: ", overall_acc)
-
-
 
 def effectRegularizationLSQ_SVM():
     X_faults = loadFaults()
@@ -132,6 +130,57 @@ def compareNNTopology():
     print("Total Acc: ", class_acc_multi)
     print(per_class_multi)
 
+def compareMocap():
+    X_faults = loadMocap()
+
+    X_faults_train = []
+    X_faults_test = []
+    X_faults_reg = []
+
+    # Split into test and training sets
+
+    for ii in range(0,len(X_faults)):
+        num_samps = np.shape(X_faults[ii])[0]
+        train_inds = np.random.choice(num_samps,int(0.25*num_samps),replace=False)
+        remaining_inds = np.array([i for i in range(0,num_samps) if i not in train_inds])
+        reg_inds = remaining_inds[np.random.choice(len(remaining_inds),int(0.25*len(remaining_inds)),replace=False)]
+        test_inds = np.array([i for i in range(0,num_samps) if i not in train_inds and i not in reg_inds])
+
+        # # Further downsample
+        # downsamp_per = 0.25
+        # train_inds = train_inds[np.random.choice(len(train_inds),int(len(train_inds)*downsamp_per), replace=False)]
+        # test_inds = test_inds[np.random.choice(len(test_inds),int(len(test_inds)*downsamp_per), replace=False)]
+
+        X_faults_train.append(X_faults[ii][train_inds,:])
+        X_faults_test.append(X_faults[ii][test_inds,:])
+        X_faults_reg.append(X_faults[ii][reg_inds,:])
+
+    # Run for 10 regularization parameters
+    lams = np.logspace(-6, 1, 10)
+
+    # One vs all testing for the 3 methods
+    print("Calculating LSQ...")
+    class_acc_lsq, acc_per_class_lsq = onevall(X_faults_train, X_faults_reg, X_faults_test,lams=lams,classfxn=wlsq)
+    print("Calculating SVM...")
+    class_acc_svm, acc_per_class_svm = onevall(X_faults_train, X_faults_reg, X_faults_test, lams=lams, classfxn=wlsvm)
+    print("Calculating NN...")
+    class_acc_nn, acc_per_class_nn = onevallNN(X_faults_train,X_faults_reg,X_faults_test)
+
+
+    print("\n\n------------------------------")
+    print("|       Mocap Results            |")
+    print("-----------------------------------")
+    print("Least Squares: ")
+    print("Total Acc: ",class_acc_lsq)
+    print(acc_per_class_lsq)
+    print(" ")
+    print("SVM: ")
+    print("Total Acc: ", class_acc_svm)
+    print(acc_per_class_svm)
+    print(" ")
+    print("NN: ")
+    print("Total Acc: ", class_acc_nn)
+    print(acc_per_class_nn)
 
 def runEvaluations(testname):
     if testname == "genclass":
@@ -142,6 +191,8 @@ def runEvaluations(testname):
         trainingAcc()
     elif testname == "nncompare":
         compareNNTopology()
+    elif testname == "mocap":
+        compareMocap()
     else:
         print("Test [",testname,"] Not Found")
 
