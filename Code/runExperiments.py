@@ -12,11 +12,12 @@ import numpy as np
 from PreProcessData import loadFaults
 from CrossValidationMulti import crossValidation
 from OnevAll import onevall, onevallNN
+import torch
 
 # Import the classifier models
 from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
-from simpleNN import nn
+from simpleNN import nn, nnMultliClass
 
 
 def noRegFiveFoldClassification():
@@ -82,6 +83,56 @@ def effectRegularizationLSQ_SVM():
     print(results_svm)
 
 
+def compareNNTopology():
+    X_faults = loadFaults()
+
+    X_faults_train = []
+    X_faults_test = []
+
+    # Split into test and training sets
+
+    for ii in range(0,len(X_faults)):
+        num_samps = np.shape(X_faults[ii])[0]
+        train_inds = np.random.choice(num_samps,int(0.8*num_samps),replace=False)
+        test_inds = [i for i in range(0,num_samps) if i not in train_inds]
+
+        X_faults_train.append(X_faults[ii][train_inds,:])
+        X_faults_test.append(X_faults[ii][test_inds,:])
+
+    # Neural network one vs all
+    class_acc, acc_per_class = onevallNN(X_faults_train,X_faults_train,X_faults_test)
+
+    # Neural network multiclass
+    net = nnMultliClass(X_faults_train)
+
+    num_correct = 0
+    num_total = 0
+    per_class_multi = []
+
+    for ii in range(0,len(X_faults_test)):
+        total_in_class = np.shape(X_faults_test[ii])[0]
+        class_correct = 0
+        for jj in range(0,np.shape(X_faults_test[ii])[0]):
+            temp = net.forward(torch.Tensor(X_faults_test[ii][jj, :]))
+            if np.argmax(temp.detach().numpy())==ii:
+                class_correct = class_correct + 1.0
+                num_correct = num_correct + 1.0
+            num_total = num_total + 1.0
+        per_class_multi.append(class_correct/total_in_class)
+    class_acc_multi = num_correct/num_total
+
+    print("\n\n------------------------------")
+    print("| Neural Network Results          |")
+    print("-----------------------------------")
+    print("One vs All NN:")
+    print("Total Acc: ",class_acc)
+    print(acc_per_class)
+    print(" ")
+    print("MultiClass NN:")
+    print("Total Acc: ", class_acc_multi)
+    print(per_class_multi)
+
+
 def runEvaluations(testname):
     if testname == "genclass":
         noRegFiveFoldClassification()
@@ -89,6 +140,8 @@ def runEvaluations(testname):
         effectRegularizationLSQ_SVM()
     elif testname == "trainingAcc":
         trainingAcc()
+    elif testname == "nncompare":
+        compareNNTopology()
     else:
         print("Test [",testname,"] Not Found")
 

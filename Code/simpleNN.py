@@ -37,7 +37,7 @@ class SimpleNN(nn.Module):
 
 class MutliClassNN(nn.Module):
     def __init__(self,num_features,num_labels):
-        super(SimpleNN, self).__init__() # call default network constructor
+        super(MutliClassNN, self).__init__() # call default network constructor
         self.fc1 = torch.nn.Linear(num_features,1000)
         self.fc2 = torch.nn.Linear(1000,1000)
         self.fc3 = torch.nn.Linear(1000,num_labels)
@@ -47,7 +47,7 @@ class MutliClassNN(nn.Module):
         x = torch.sigmoid(self.fc3(x))
         return x
 
-def nn(A,b):
+def nn(A,b, epochs=5000):
     # create an instance of the network
     net = SimpleNN(np.shape(A)[1])
 
@@ -58,7 +58,7 @@ def nn(A,b):
 
     init_weights = copy.deepcopy(net.fc1.weight.data)
 
-    for ii in range(0,5000):
+    for ii in range(0,epochs):
         network_in = A
         network_target = b
 
@@ -89,32 +89,41 @@ def nn(A,b):
     return copy.deepcopy(net)
 
 
-def nnMultliClass(A,b):
+def nnMultliClass(As, epochs=5000):
     # create an instance of the network
-    net = SimpleNN(np.shape(A)[1])
+    net = MutliClassNN(np.shape(As[0])[1],len(As))
 
     # create the optimizer
     optimizer = optim.Adam(net.parameters(), lr=0.01)
 
-    # Run epochs
+    # Format the data for pytorch
+    A = As[0]
+    B = np.zeros((np.shape(A)[0],len(As)))
+    B[:,0] = 1.0
+
+    for ii in range(1,len(As)):
+        A = np.concatenate((A,As[ii]),axis=0)
+        B_temp = np.zeros((np.shape(As[ii])[0],len(As)))
+        B_temp[:,ii] = 1.0
+        B = np.concatenate((B,B_temp),axis=0)
 
     init_weights = copy.deepcopy(net.fc1.weight.data)
 
+    # run the epochs to train the network
     for ii in range(0, 5000):
         network_in = A
-        network_target = b
+        network_target = B
 
         optimizer.zero_grad()  # zero the gradient buffers
         output = net.forward(torch.Tensor(network_in))
         loss = torch.nn.functional.mse_loss(output, torch.Tensor(network_target))
         loss.backward()
         optimizer.step()  # Does the update
-        # if ii%1000==0:
+        # if ii%100==0:
         #     print("Epoch:", ii, "Training Loss: ",loss.item())
         # print(net.fc1.weight.grad)
 
-
-
+    return copy.deepcopy(net)
 
 def compareNN():
     # create a hold-out set with approx 20 percent of the data
@@ -122,6 +131,13 @@ def compareNN():
     num_class = len(X_faults)
 
 
+def test_mutli():
+    X_faults = loadFaults()
+    net = nnMultliClass(X_faults)
+
+    temp = net.forward(torch.Tensor(X_faults[3][5, :]))
+    print(temp.detach().numpy())
+    print(np.argmax(temp.detach().numpy()))
 
 def test():
     X_faults = loadFaults()
@@ -142,7 +158,7 @@ def test():
     nn(X_train_temp,y_train_temp,0.0)
 
 if __name__ == "__main__":
-    test()
+    test_mutli()
 
 
 
