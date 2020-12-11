@@ -8,7 +8,8 @@ to test with the implemented algorithms
 __author__ = "Mike Hagenow"
 
 import numpy as np
-from itertools import combinations
+from itertools import combinations, permutations
+from tqdm import tqdm
 
 def loadFaults():
     # define that space yo yo
@@ -66,7 +67,7 @@ def loadMocap():
 
     data_full = data[ind_full]
 
-    Y = data_full[:,0]
+    Y = data_full[:,0] - 1.0
 
     X_mocap = []
 
@@ -74,7 +75,10 @@ def loadMocap():
     for ii in range(0,int(np.max(Y)+1)):
         X_mocap.append(np.zeros((0,27)))
 
-    for ii in range(0,np.shape(data_full)[0]):
+    print("---------------------")
+    print(" Loading MOCAP DATA  ")
+    print("---------------------")
+    for ii in tqdm(range(0,np.shape(data_full)[0])):
         # calculate the features
 
         # Using 6 markers
@@ -86,11 +90,9 @@ def loadMocap():
         data_3d[:,1] = data_full[ii][[3,6,9,12,15,18]]
         data_3d[:,2] = data_full[ii][[4,7,10,13,16,19]]
 
-
         # max distance between pts
         max_dist = -1.0
         for pt_combo in list(combinations(data_3d, 2)):
-            print(pt_combo)
             dist = np.linalg.norm(pt_combo[1]-pt_combo[0])
             if dist>max_dist:
                 max_dist = dist
@@ -98,7 +100,6 @@ def loadMocap():
         # min distance between pts
         min_dist = np.inf
         for pt_combo in list(combinations(data_3d, 2)):
-            print(pt_combo)
             dist = np.linalg.norm(pt_combo[1] - pt_combo[0])
             if dist < min_dist:
                 min_dist = dist
@@ -110,20 +111,46 @@ def loadMocap():
         average_dist = total_dist/len(list(combinations(data_3d, 2)))
 
         # max angle
-
+        max_angle = -1.0
+        for pt_combo in list(permutations(data_3d, 3)):
+            line1 = pt_combo[1]-pt_combo[0]
+            line2 = pt_combo[2]-pt_combo[0]
+            theta = np.arccos(np.dot(line1,line2)/(np.linalg.norm(line1)*np.linalg.norm(line2)))
+            if theta>max_angle:
+                max_angle=theta
 
         # min angle
-
+        min_angle = np.inf
+        for pt_combo in list(permutations(data_3d, 3)):
+            line1 = pt_combo[1] - pt_combo[0]
+            line2 = pt_combo[2] - pt_combo[0]
+            theta = np.arccos(np.dot(line1, line2) / (np.linalg.norm(line1) * np.linalg.norm(line2)))
+            if theta < min_angle:
+                min_angle = theta
 
         # average angle
+        total_angle = 0.0
+        for pt_combo in list(permutations(data_3d, 3)):
+            line1 = pt_combo[1] - pt_combo[0]
+            line2 = pt_combo[2] - pt_combo[0]
+            theta = np.arccos(np.dot(line1, line2) / (np.linalg.norm(line1) * np.linalg.norm(line2)))
+            total_angle = total_angle + theta
+        average_angle = total_angle/len(list(permutations(data_3d, 3)))
 
+        # Put the computed features into the matrix
+        if np.shape(X_mocap[int(Y[ii])])[0] == 0:
+            X_mocap[int(Y[ii])] = np.array([max_dist, min_dist, average_dist, max_angle, min_angle, average_angle]).reshape(1,6)
+        else:
+            X_mocap[int(Y[ii])] = np.append(X_mocap[int(Y[ii])],np.array([max_dist, min_dist, average_dist, max_angle, min_angle, average_angle]).reshape((1,6)),axis=0)
 
     # normalize the features
+    for ii in range(0,len(X_mocap)):
+        X_mocap[ii] = X_mocap[ii]/np.linalg.norm(X_mocap[ii],axis=0)
 
     return X_mocap
 
 if __name__ == "__main__":
-    loadFaults()
+    loadMocap()
 
 
 
