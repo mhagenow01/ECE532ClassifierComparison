@@ -193,7 +193,7 @@ def onevallNN(X_train,X_reg,X_test):
 
     # each type of classification
     for ii in range(0,num_class):
-        print("Training Class ",ii)
+        # print("Training Class ",ii)
 
         # Gather the training data for the weights
 
