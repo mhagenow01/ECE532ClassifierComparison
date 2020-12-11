@@ -22,7 +22,6 @@ import copy
 # tutorial usage: https://curiousily.com/posts/build-your-first-neural-network-with-pytorch/
 # https://www.analyticsvidhya.com/blog/2019/01/guide-pytorch-neural-networks-case-studies/
 
-
 class SimpleNN(nn.Module):
     def __init__(self,num_features):
         super(SimpleNN, self).__init__() # call default network constructor
@@ -131,7 +130,7 @@ def compareNN():
     num_class = len(X_faults)
 
 
-def test_mutli():
+def test_multi():
     X_faults = loadFaults()
     net = nnMultliClass(X_faults)
 
@@ -158,7 +157,7 @@ def test():
     nn(X_train_temp,y_train_temp,0.0)
 
 if __name__ == "__main__":
-    test_mutli()
+    test_multi()
 
 
 
