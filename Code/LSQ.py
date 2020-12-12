@@ -10,15 +10,23 @@ __author__ = "Mike Hagenow"
 import numpy as np
 from PreProcessData import loadFaults
 
-# Calculate the solution to the regularized least squares solution using ridge regression
-# e.g., Tikhonov regularization
+"""
+Calculate the solution to the regularized least squares solution using ridge regression
+e.g., Tikhonov regularization
+
+This works on a matrix of features A, vector of labels b, and scalar lamda for regularization
+"""
 def lsq(A,b,lam):
     return np.linalg.inv(A.T @ A + lam*np.eye(np.shape(A)[1])) @ A.T @ b
 
-# Calculate the solution to the regularized least squares solution where each sample
-# also has an associated wieght which are stored in vector, w, which is used
-# to perform weighted least squares by converting W to a diagonal matrix
-# source: https://en.wikipedia.org/wiki/Weighted_least_squares
+
+"""
+Calculate the solution to the regularized least squares solution where each sample
+also has an associated wieght which are stored in vector, w, which is used
+to perform weighted least squares by converting W to a diagonal matrix
+
+source: https://en.wikipedia.org/wiki/Weighted_least_squares
+"""
 def wlsq(A,w,b,lam):
 
     # create diagonal weighting matrix
@@ -28,6 +36,11 @@ def wlsq(A,w,b,lam):
     return np.linalg.inv(A.T @ W @ A + lam*np.eye(np.shape(A)[1])) @ A.T @ W @ b
 
 
+"""
+Gradient Descent version fo the least squares
+
+Note: Implemented but not actually used for any of the analysis
+"""
 def wlsqGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
     if (tol is None):
         tol = 0.001
@@ -41,7 +54,7 @@ def wlsqGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
     w = np.zeros((np.shape(A)[1],))
     not_converged = True
 
-    max_iters = 100
+    max_iters = 500
     num_iterations = 0
     while (not_converged and num_iterations < max_iters):
         w_old = w
@@ -52,7 +65,10 @@ def wlsqGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
         num_iterations = num_iterations + 1
     return w.reshape((len(w)), 1)
 
-
+"""
+Least squares subgradient calculation either works for l2 regularization (default)
+or no regularization
+"""
 def wgradlsq(w,lam,y,X, w_samples, reg='l2'):
     subgradval=np.zeros(np.shape(w))
     for ii in range(0,np.shape(X)[0]):
@@ -64,6 +80,9 @@ def wgradlsq(w,lam,y,X, w_samples, reg='l2'):
         subgradval = subgradval # no regularization
     return subgradval
 
+"""
+Least squares for l1 regularizer using proximal gradient descent
+"""
 def wlsqPGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
     if (tol is None):
         tol = 0.001
@@ -93,6 +112,10 @@ def wlsqPGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
             not_converged = False
         num_iterations = num_iterations + 1
     return w.reshape((len(w)), 1)
+
+"""
+Next three are various test functions where the multiclass data is turned into binary classification problems
+"""
 
 def test():
     X_faults = loadFaults()

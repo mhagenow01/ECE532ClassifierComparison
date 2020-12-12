@@ -11,8 +11,10 @@ import matplotlib.pyplot as plt
 from LSQ import lsq
 from lSVM import lsvm
 
-# Fabricated 2D data to test the LSQ and SVM methods
 
+"""
+Fabricated 2D data to test the LSQ and SVM methods
+"""
 def test():
 
     X_plus = np.array([[1.0, 3.0, 1.0],

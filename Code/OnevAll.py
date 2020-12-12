@@ -21,9 +21,11 @@ import copy
 from cleanlab.classification import LearningWithNoisyLabels
 from sklearn.linear_model import LogisticRegression
 
-# Calculate one vs all test results
-# to deal with unequal class sizes, this method downsamples the
-# 'all' data to be the same size as the 'one' set
+"""
+Calculate one vs all test results
+to deal with unequal class sizes, this method downsamples the
+'all' data to be the same size as the 'one' set
+"""
 def onevall_downsample(X_train,X_reg,X_test,lams,classfxn):
 
     num_class = len(X_train)
@@ -107,8 +109,10 @@ def onevall_downsample(X_train,X_reg,X_test,lams,classfxn):
     print("classification accuracy:",correct/total)
 
 
-# Calculate one vs all test results
-# using a weighting matrix to address the uneven class instances
+"""
+Calculate one vs all test results
+using a weighting matrix to address the uneven class instances
+"""
 def onevall(X_train,X_reg,X_test,lams,classfxn):
 
     num_class = len(X_train)
@@ -188,8 +192,11 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
     # print("classification accuracy:",correct/total)
     return correct/total, acc_per_class, copy.deepcopy(best_ws)
 
-# Calculate one vs all test results
-# using a weighting matrix to address the uneven class instances
+
+"""
+Separate routine for the one vs all using the neural networks in order to deal
+with the evaluations (pytorch instead of decision boundary)
+"""
 def onevallNN(X_train,X_reg,X_test):
 
     num_class = len(X_train)
@@ -243,8 +250,10 @@ def onevallNN(X_train,X_reg,X_test):
     # print("classification accuracy:",correct/total)
     return correct/total, acc_per_class
 
-# Calculate one vs all test results
-# using a weighting matrix to address the uneven class instances
+"""
+Separate routine for the one vs all using the cleanlab in order to deal
+with the evaluations (sklearn prediction instead of decision boundary)
+"""
 def onevallCleanlab(X_train,X_reg,X_test):
 
     num_class = len(X_train)
@@ -297,6 +306,9 @@ def onevallCleanlab(X_train,X_reg,X_test):
     # print("classification accuracy:",correct/total)
     return correct/total, acc_per_class, 0
 
+"""
+Run one vs all on the training data for all three methods
+"""
 def main():
     X_faults = loadFaults()
     # lams = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 1, 2, 5, 10.0, 20.0]
@@ -314,7 +326,9 @@ def main():
     overall_acc, _, _ = onevall(X_faults, X_faults, X_faults, lams, wlsvm)
     print("wSVM Acc: ", overall_acc)
 
-
+"""
+Run one vs all on the cleanlab data
+"""
 def testSOTA():
     X_faults = loadFaults()
     overall_acc, _, _ = onevallCleanlab(X_faults,X_faults,X_faults)

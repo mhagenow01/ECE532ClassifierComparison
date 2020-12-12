@@ -23,6 +23,13 @@ from simpleNN import nn, nnMultliClass
 from cleanlab.classification import LearningWithNoisyLabels
 from sklearn.linear_model import LogisticRegression
 
+"""
+All functions have a corresponding lookup string that is listed below. Each function runs one of the evaluation.
+
+Each function will print the results to the screen when finished.
+
+Note: several of these can take over an hour to complete
+"""
 
 def noRegFiveFoldClassification():
     X_faults = loadFaults()
@@ -243,6 +250,9 @@ def state_of_the_art():
 
     crossValidation(X_faults, 5, lam, 'clab')
 
+"""
+Single command line argument tells script which evaluation should be run
+"""
 def runEvaluations(testname):
     if testname == "genclass":
         noRegFiveFoldClassification()

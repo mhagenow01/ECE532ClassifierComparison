@@ -22,6 +22,9 @@ import copy
 # tutorial usage: https://curiousily.com/posts/build-your-first-neural-network-with-pytorch/
 # https://www.analyticsvidhya.com/blog/2019/01/guide-pytorch-neural-networks-case-studies/
 
+"""
+Class defines pytorch network structure for binary classifier
+"""
 class SimpleNN(nn.Module):
     def __init__(self,num_features):
         super(SimpleNN, self).__init__() # call default network constructor
@@ -34,6 +37,9 @@ class SimpleNN(nn.Module):
         x = torch.sigmoid(self.fc3(x))
         return x
 
+"""
+Class defines pytorch network structure for multiclass classifier
+"""
 class MutliClassNN(nn.Module):
     def __init__(self,num_features,num_labels):
         super(MutliClassNN, self).__init__() # call default network constructor
@@ -46,6 +52,9 @@ class MutliClassNN(nn.Module):
         x = torch.sigmoid(self.fc3(x))
         return x
 
+"""
+Creates a binary network and trains on the data. Epochs are generall the default 5000
+"""
 def nn(A,b, epochs=5000):
     # create an instance of the network
     net = SimpleNN(np.shape(A)[1])
@@ -87,7 +96,11 @@ def nn(A,b, epochs=5000):
 
     return copy.deepcopy(net)
 
+"""
+Class defines pytorch network structure for multiclass
 
+As is a list of the A matrix for each class
+"""
 def nnMultliClass(As, epochs=5000):
     # create an instance of the network
     net = MutliClassNN(np.shape(As[0])[1],len(As))
@@ -124,12 +137,10 @@ def nnMultliClass(As, epochs=5000):
 
     return copy.deepcopy(net)
 
-def compareNN():
-    # create a hold-out set with approx 20 percent of the data
-    X_faults = loadFaults()
-    num_class = len(X_faults)
 
-
+"""
+Test function for multiclass to check the output for a single feature vector
+"""
 def test_multi():
     X_faults = loadFaults()
     net = nnMultliClass(X_faults)
@@ -138,6 +149,9 @@ def test_multi():
     print(temp.detach().numpy())
     print(np.argmax(temp.detach().numpy()))
 
+"""
+Test function for the binary classifier neural network. Tests for one choice of classes.
+"""
 def test():
     X_faults = loadFaults()
     num_class = len(X_faults)

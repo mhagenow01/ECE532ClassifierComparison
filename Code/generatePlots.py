@@ -46,6 +46,9 @@ def plotClassificationPerClassFiveFold():
     plt.legend()
     plt.show()
 
+"""
+Generates the plot for the l2 regularization for LSQ and SVM
+"""
 def plotl2reg():
     fig = plt.figure()
     fig.set_size_inches(10, 6)
@@ -72,6 +75,9 @@ def plotl2reg():
     plt.legend()
     plt.show()
 
+"""
+Generates the plot for the l1 feature weights for LSQ
+"""
 def plotl1reg():
     fig = plt.figure()
     fig.set_size_inches(10, 4)
@@ -92,7 +98,9 @@ def plotl1reg():
     plt.ylabel('Average Weight Across Binary Classifiers')
     plt.show()
 
-
+"""
+Plot both the l2 and l1 analysis as subplots so they can be condensed for the report
+"""
 def plotbothreg():
     fig = plt.figure()
     fig.set_size_inches(10, 4)
@@ -155,8 +163,8 @@ def plotbothreg():
 
 if __name__ == "__main__":
     # plotClassificationPerClassFiveFold()
-    # plotl2reg()
+    plotl2reg()
     # plotl1reg()
-    plotbothreg()
+    # plotbothreg()
 
 

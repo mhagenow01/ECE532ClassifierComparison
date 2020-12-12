@@ -11,6 +11,11 @@ import numpy as np
 from itertools import combinations, permutations
 from tqdm import tqdm
 
+"""
+Load the steel plate fault csv into numpy
+
+output is a list of numpy arrays (one matrix of feature vectors for each class)
+"""
 def loadFaults():
     # define that space yo yo
     # todo: change to package directory
@@ -57,6 +62,11 @@ def loadFaults():
     print("---")
     return X_faults
 
+"""
+Load the mocap data, prune, and compute features which are stored in numpy
+
+output is a list of numpy arrays (one matrix of feature vectors for each class)
+"""
 def loadMocap():
     data = np.loadtxt('./../Data/Postures.csv',delimiter=',',skiprows=2)
 

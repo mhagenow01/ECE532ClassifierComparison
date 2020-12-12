@@ -9,8 +9,10 @@ __author__ = "Mike Hagenow"
 import numpy as np
 from PreProcessData import loadFaults
 
-# Calculate the solution to the regularized least squares solution using
-# linear support vector machines (SVM)
+"""
+Calculate the solution to the regularized least squares solution using
+linear support vector machines (SVM)
+"""
 def lsvm(A,b,lam,tau=None,tol=None):
     if(tol is None):
         tol = 0.001
@@ -35,6 +37,12 @@ def lsvm(A,b,lam,tau=None,tol=None):
         num_iterations = num_iterations + 1
     return w.reshape((len(w)),1)
 
+"""
+Calculate the solution to the regularized least squares solution using
+linear support vector machines (SVM)
+
+In this method, the subgradient is weighted based on weights for each sample
+"""
 def wlsvm(A,w_samples,b,lam,tau=None,tol=None):
     if(tol is None):
         tol = 0.001
@@ -59,6 +67,9 @@ def wlsvm(A,w_samples,b,lam,tau=None,tol=None):
         num_iterations = num_iterations + 1
     return w.reshape((len(w)),1)
 
+"""
+Normal subgradient for the hinge loss
+"""
 def subgrad(w,lam,y,X):
     subgradval=np.zeros(np.shape(w))
     for ii in range(0,np.shape(X)[0]):
@@ -67,6 +78,9 @@ def subgrad(w,lam,y,X):
     subgradval = subgradval + 2*lam*w
     return subgradval
 
+"""
+Weighted subgradient for the hinge loss
+"""
 def wsubgrad(w,lam,y,X, w_samples):
     subgradval=np.zeros(np.shape(w))
     for ii in range(0,np.shape(X)[0]):
@@ -75,6 +89,9 @@ def wsubgrad(w,lam,y,X, w_samples):
     subgradval = subgradval + 2*lam*w
     return subgradval
 
+"""
+Test the SVM for various lambda values for a random choice of two classes for the binary classifier
+"""
 def test():
     X_faults = loadFaults()
     X_train_plus1 = X_faults[0][:int(np.shape(X_faults[0])[0]/2.0),:]

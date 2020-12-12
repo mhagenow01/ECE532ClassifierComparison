@@ -16,8 +16,12 @@ from lSVM import lsvm, wlsvm
 from simpleNN import nn
 from OnevAll import onevall, onevallNN, onevallCleanlab
 
-# Create the sets for the cross validation
-# divided into training segments, regularization segments, and validation segments
+"""
+Create the sets for the cross validation
+divided into training segments, regularization segments, and validation segments
+
+each input (e.g., X_faults) is a list of matrices for the feature vectors to be used
+"""
 def crossValidation(X_faults,num_segs,lams,classfxn):
     acc_total = 0.0
     total_runs = 0
@@ -77,7 +81,10 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
 
     return acc_total/total_runs
 
-def main():
+"""
+tests cross validation with no regularization for each of the 3 methods
+"""
+def test():
     X_faults = loadFaults()
     lam = np.logspace(-5,-2,20)
     lam = [0.0]
@@ -85,9 +92,8 @@ def main():
     crossValidation(X_faults,5,lam,wlsvm)
     crossValidation(X_faults,5,lam,nn)
 
-
 if __name__ == "__main__":
-    main()
+    test()
 
 
 
