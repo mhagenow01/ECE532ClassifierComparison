@@ -26,7 +26,7 @@ PDF versions of project writeups are available in the /Documents/ directory
 * sci-kit learn
 
 #### Usage
-The code is tested using Ubuntu 18.04. The code for loading CSV files is based on a linux filesystem.
+NOTE: The code is tested using Ubuntu 18.04. The code for loading CSV files is based on a linux filesystem.
 For a different filesystem, minor changes may be required in /Code/PreProcessData.py.
 
 All of the main report results can be run using the runExperiments script in the code directory. Note: These scripts assume that your
@@ -44,6 +44,8 @@ on the LSQ and SVM methods
 * l1 - Runs LSQ with an l1 regularizer to look at what features are driven towards zero
 * sota - runs cross validation with the cleanlab method using logistic regression in sklearn
 
+** Also note: many of these scripts can take more than an hour to complete
+
 
 #### Results
 See the final report in the /Documents/ directory for a more thorough discussion.
@@ -54,7 +56,8 @@ Regression analysis using Steel Plate faults:
 | ------------- | ------------- | ------------- | ------------- |
 | Training Data  | 0.684  | 0.592* | 0.933 |
 | Cross Validation (n = 5)  | 0.585 | 0.567 | 0.583 |
-(*) dependent on number of iterations of gradient descent. Similar to LSQ for high number of iterations.
+
+(*) dependent on number of iterations of gradient descent. Similar to LSQ for a high number of iterations.
 
 
 #### Specific File Functions
@@ -65,3 +68,6 @@ Regression analysis using Steel Plate faults:
 a given training, regularization test, and test set.
 * PreProcessData.py - reads csv files, peforms basic preprocessing such as normalization of data columns (to account for vastly different units), and stores data in numpy arrays
 * test2Ddata.py - contains some contrived 2D data that is used to validate algorithms with known results.
+* CrossValidationMulti.py - breaks data into folds and does the one vs all testing for each combination
+* generatePlots.py - with data from the experiments script preloading, simply generate plots using matplotlib
+* runExperiments.py - main entry script runs a variety of experiments
