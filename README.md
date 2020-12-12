@@ -59,6 +59,9 @@ Regression analysis using Steel Plate faults:
 
 (*) dependent on number of iterations of gradient descent. Similar to LSQ for a high number of iterations.
 
+Classification Accuracy Per Class:
+![Per Class Accuracy](/imgs/classification_per_class.png)
+
 
 #### Specific File Functions
 * LSQ.py - includes implementation and testing code for least squares routines
