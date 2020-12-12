@@ -33,8 +33,8 @@ PDF versions of project writeups are available in the /Documents/ directory
 * sci-kit learn
 
 #### Usage
-NOTE: The code is tested using Ubuntu 18.04. The code for loading CSV files is based on a linux filesystem.
-For a different filesystem, minor changes may be required in /Code/PreProcessData.py.
+NOTE: The code is tested using **Ubuntu 18.04**. The code for loading CSV files is based on a linux filesystem.
+For a different filesystem, minor changes may be required in **/Code/PreProcessData.py**.
 
 All of the main report results can be run using the runExperiments script in the code directory. Note: These scripts assume that your
  current directory is the /Code/ directory. In that directory, you can use the following syntax to run examples:
@@ -51,7 +51,7 @@ on the LSQ and SVM methods
 * l1 - Runs LSQ with an l1 regularizer to look at what features are driven towards zero
 * sota - runs cross validation with the cleanlab method using logistic regression in sklearn
 
-** Also note: many of these scripts can take more than an hour to complete
+**Also note: many of these scripts can take more than an hour to complete**
 
 
 #### Results
