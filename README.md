@@ -50,7 +50,7 @@ on the LSQ and SVM methods
 #### Results
 See the final report in the /Documents/ directory for a more thorough discussion.
 
-Regression analysis using Steel Plate faults:
+**Regression analysis using Steel Plate faults:**
 
 |    | wLSQ | wSVM | NN|  
 | ------------- | ------------- | ------------- | ------------- |
@@ -59,8 +59,14 @@ Regression analysis using Steel Plate faults:
 
 (*) dependent on number of iterations of gradient descent. Similar to LSQ for a high number of iterations.
 
-Classification Accuracy Per Class:
+**Classification Accuracy Per Class:**
 ![Per Class Accuracy](/imgs/classification_per_class.png)
+
+**l2 Regularization for LSQ and SVM:**
+![l2_reg](/imgs/regularization_l2.png)
+
+**l1 Regularization Feature Weights:**
+![l1_weights](/imgs/features_l1_faults.png)
 
 
 #### Specific File Functions
