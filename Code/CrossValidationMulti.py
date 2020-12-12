@@ -14,7 +14,7 @@ from PreProcessData import loadFaults
 from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
 from simpleNN import nn
-from OnevAll import onevall, onevallNN
+from OnevAll import onevall, onevallNN, onevallCleanlab
 
 # Create the sets for the cross validation
 # divided into training segments, regularization segments, and validation segments
@@ -23,7 +23,10 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
     total_runs = 0
     acc_per_class = np.zeros((len(X_faults)))
 
-    print("\n\nRunning Cross Validation (",num_segs," sets) for ",classfxn.__name__,"\n")
+    if(classfxn!='clab'):
+        print("\n\nRunning Cross Validation (",num_segs," sets) for ",classfxn.__name__,"\n")
+    else:
+        print("\n\nRunning Cross Validation (", num_segs, " sets) for Clean Lab\n")
 
     for ii in tqdm(range(0, num_segs)):  # set for determining which regularization parameter
         for jj in tqdm(range(0, num_segs)):  # validation set
@@ -51,10 +54,12 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
                 X_test.append(X_test_temp)
              
              # Run the one vs all classification for this set
-            if classfxn is not nn:
-                acc, acc_per_class_temp = onevall(X_training, X_reg, X_test, lams, classfxn)
+            if classfxn is nn :
+                acc, acc_per_class_temp, not_used = onevallNN(X_training, X_reg, X_test)
+            elif classfxn is 'clab':
+                acc, acc_per_class_temp, not_used = onevallCleanlab(X_training, X_reg, X_test)
             else:
-                acc, acc_per_class_temp = onevallNN(X_training, X_reg, X_test)
+                acc, acc_per_class_temp, not_used = onevall(X_training, X_reg, X_test, lams, classfxn)
             acc_total = acc_total + acc
 
             for aa in range(0,len(acc_per_class_temp)):
@@ -62,7 +67,11 @@ def crossValidation(X_faults,num_segs,lams,classfxn):
 
             total_runs = total_runs + 1
 
-    print("\nOverall Classification Accuracy (",classfxn.__name__,"): ",acc_total/total_runs)
+    if (classfxn != 'clab'):
+        print("\nOverall Classification Accuracy (",classfxn.__name__,"): ",acc_total/total_runs)
+    else:
+        print("\nOverall Classification Accuracy (Clean Lab): ", acc_total / total_runs)
+
     for ii in range(0,len(X_faults)):
         print("   class ",ii,": ",acc_per_class[ii]/total_runs)
 

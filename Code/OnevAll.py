@@ -16,6 +16,10 @@ from LSQ import lsq, wlsq
 from lSVM import lsvm, wlsvm
 from simpleNN import nn
 import torch
+import copy
+
+from cleanlab.classification import LearningWithNoisyLabels
+from sklearn.linear_model import LogisticRegression
 
 # Calculate one vs all test results
 # to deal with unequal class sizes, this method downsamples the
@@ -182,7 +186,7 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
     # print("correct:",correct)
     # print("total:",total)
     # print("classification accuracy:",correct/total)
-    return correct/total, acc_per_class
+    return correct/total, acc_per_class, copy.deepcopy(best_ws)
 
 # Calculate one vs all test results
 # using a weighting matrix to address the uneven class instances
@@ -239,6 +243,59 @@ def onevallNN(X_train,X_reg,X_test):
     # print("classification accuracy:",correct/total)
     return correct/total, acc_per_class
 
+# Calculate one vs all test results
+# using a weighting matrix to address the uneven class instances
+def onevallCleanlab(X_train,X_reg,X_test):
+
+    num_class = len(X_train)
+    best_lnls = []
+
+    # each type of classification
+    for ii in range(0,num_class):
+
+        # Gather the training data for the weights
+
+        # positive label is the 'one'
+        X_train_plus1 = X_train[ii]
+
+        # negative label is the 'all' randomly downsampled to the same length as the positive
+        X_train_minus1 = np.vstack([X_train[i] for i in range(0,num_class) if (i!=ii)])
+
+        X_train_temp = np.vstack((X_train_plus1, X_train_minus1))
+        y_train_temp = np.vstack((np.ones((np.shape(X_train_plus1)[0], 1)), np.zeros((np.shape(X_train_minus1)[0], 1))))
+
+        lnl = LearningWithNoisyLabels(clf=LogisticRegression())
+        lnl.fit(X_train_temp,y_train_temp.flatten().astype(np.int))
+        best_lnls.append(copy.deepcopy(lnl))
+
+
+    # With the test set, determine the overall classification error
+    correct = 0
+    acc_per_class = []
+    total = 0
+    for ii in range(0,num_class):
+        total = total + np.shape(X_test[ii])[0]
+        total_class = np.shape(X_test[ii])[0]
+        correct_per_class = 0
+        for jj in range(0,np.shape(X_test[ii])[0]):
+            # for each data point, get the most clear correct value (aka, highest value)
+            correct_class = ii
+            best_val = -np.inf
+            for kk in range(0,num_class):
+                temp = best_lnls[kk].predict_proba([X_test[ii][jj,:]])[0][1] #probability from sklearn
+                if temp > best_val:
+                    best_val=temp
+                    best_class = kk
+
+            if(best_class==correct_class):
+                correct = correct + 1
+                correct_per_class = correct_per_class + 1
+
+        acc_per_class.append(correct_per_class/total_class)
+    # print("correct:",correct)
+    # print("total:",total)
+    # print("classification accuracy:",correct/total)
+    return correct/total, acc_per_class, 0
 
 def main():
     X_faults = loadFaults()
@@ -246,16 +303,26 @@ def main():
     lams = [0.0]
 
     # Run everything with the neural network
-    overall_acc = onevallNN(X_faults,X_faults,X_faults)
+    overall_acc, _ = onevallNN(X_faults,X_faults,X_faults)
     print("NN Overall Acc: ",overall_acc)
 
     # Run everything with least-squares
-    overall_acc = onevall(X_faults,X_faults,X_faults,lams,wlsq)
+    overall_acc, _, _ = onevall(X_faults,X_faults,X_faults,lams,wlsq)
     print("wLSQ Acc:", overall_acc)
 
     # Run everything with SVM
-    overall_acc = onevall(X_faults, X_faults, X_faults, lams, wlsvm)
+    overall_acc, _, _ = onevall(X_faults, X_faults, X_faults, lams, wlsvm)
     print("wSVM Acc: ", overall_acc)
+
+
+def testSOTA():
+    X_faults = loadFaults()
+    overall_acc, _, _ = onevallCleanlab(X_faults,X_faults,X_faults)
+    print(overall_acc)
+
+    # Run everything with least-squares
+    overall_acc, _, _ = onevall(X_faults, X_faults, X_faults, [0.0], wlsq)
+    print("wLSQ Acc:", overall_acc)
 
 if __name__ == "__main__":
     main()
