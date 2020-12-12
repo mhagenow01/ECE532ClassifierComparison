@@ -55,7 +55,7 @@ on the LSQ and SVM methods
 
 
 ### Results
-See the final report in the /Documents/ directory for a more thorough discussion.
+See the final report in the /Documents/ directory for expanded discussion (what could fit in 5 pages!).
 
 **Regression analysis using Steel Plate faults:**
 
@@ -68,6 +68,9 @@ See the final report in the /Documents/ directory for a more thorough discussion
 
 **Classification Accuracy Per Class:**
 ![Per Class Accuracy](/imgs/classification_per_class.png)
+
+Interestingly, the SVM was comparably to the other methods except on the fourth class, dirtiness. The missed classifications were scattered
+across other classes, but mainly Pastry and Other faults.
 
 **l2 Regularization for LSQ and SVM:**
 ![l2_reg](/imgs/regularization_l2.png)

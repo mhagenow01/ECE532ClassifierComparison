@@ -41,7 +41,7 @@ def noRegFiveFoldClassification():
 
     crossValidation(X_faults, 5, lam, wlsq)
     crossValidation(X_faults, 5, lam, wlsvm)
-    # crossValidation(X_faults, 5, lam, nn)
+    crossValidation(X_faults, 5, lam, nn)
 
 def trainingAcc():
     X_faults = loadFaults()

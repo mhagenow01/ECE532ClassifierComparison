@@ -185,6 +185,8 @@ def onevall(X_train,X_reg,X_test,lams,classfxn):
             if(best_class==correct_class):
                 correct = correct + 1
                 correct_per_class = correct_per_class + 1
+            # if(best_class!=correct_class and correct_class==4): # use to check specific misclassifications
+            #     print("MissedClass:",best_class)
 
         acc_per_class.append(correct_per_class/total_class)
     # print("correct:",correct)
