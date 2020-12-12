@@ -78,6 +78,12 @@ across other classes, but mainly Pastry and Other faults.
 **l1 Regularization Feature Weights:**
 ![l1_weights](/imgs/features_l1_faults.png)
 
+**Motion Capture Analysis (Test/Train Sets)**
+
+|    | wLSQ | wSVM | NN|  
+| ------------- | ------------- | ------------- | ------------- |
+| Test Set  | 0.172  | 0.240 | 0.881 |
+
 
 #### Specific File Functions
 * LSQ.py - includes implementation and testing code for least squares routines
