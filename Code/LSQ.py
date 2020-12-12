@@ -77,7 +77,7 @@ def wlsqPGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
     w = np.zeros((np.shape(A)[1],))
     not_converged = True
 
-    max_iters = 100
+    max_iters = 500
     num_iterations = 0
     while (not_converged and num_iterations < max_iters):
         w_old = w
@@ -87,7 +87,7 @@ def wlsqPGD(A,w_samples,b,lam,reg='l2',tol=None, tau=None):
 
         # Regularization Step
         for ii in range(0,len(w)):
-            w[ii] = (np.abs(w[ii])-(lam*tau/2)*float(np.abs(w[ii])-(lam*tau/2))>0) * np.sign(w[ii])
+            w[ii] = (np.abs(w[ii])-(lam*tau/2))*float(np.abs(w[ii])-(lam*tau/2)>0) * np.sign(w[ii])
 
         if (np.linalg.norm(w - w_old) < tol):
             not_converged = False

@@ -15,9 +15,13 @@ from OnevAll import onevall, onevallNN
 import torch
 
 # Import the classifier models
-from LSQ import lsq, wlsq
+from LSQ import lsq, wlsq, wlsqPGD
 from lSVM import lsvm, wlsvm
 from simpleNN import nn, nnMultliClass
+
+# State of the art method
+from cleanlab.classification import LearningWithNoisyLabels
+from sklearn.linear_model import LogisticRegression
 
 
 def noRegFiveFoldClassification():
@@ -41,15 +45,15 @@ def trainingAcc():
     print("-------------------------------------")
 
     # Run everything with the neural network
-    overall_acc = onevallNN(X_faults, X_faults, X_faults)
+    overall_acc, not_used = onevallNN(X_faults, X_faults, X_faults)
     print("Neural Network Classification Accuracy: ", overall_acc)
 
     # Run everything with least-squares
-    overall_acc = onevall(X_faults, X_faults, X_faults, lam, wlsq)
+    overall_acc, not_used, not_used = onevall(X_faults, X_faults, X_faults, lam, wlsq)
     print("wLSQ Classification Accuracy:", overall_acc)
 
     # Run everything with SVM
-    overall_acc = onevall(X_faults, X_faults, X_faults, lam, wlsvm)
+    overall_acc, not_used, not_used = onevall(X_faults, X_faults, X_faults, lam, wlsvm)
     print("SVM Classification Accuracy: ", overall_acc)
 
 def effectRegularizationLSQ_SVM():
@@ -160,11 +164,14 @@ def compareMocap():
 
     # One vs all testing for the 3 methods
     print("Calculating LSQ...")
-    class_acc_lsq, acc_per_class_lsq = onevall(X_faults_train, X_faults_reg, X_faults_test,lams=lams,classfxn=wlsq)
+    class_acc_lsq, acc_per_class_lsq, not_used = onevall(X_faults_train, X_faults_reg, X_faults_test,lams=lams,classfxn=wlsq)
+    class_acc_lsq_training, _, _ = onevall(X_faults_train,X_faults_train,X_faults_train,lams=[0.0],classfxn=wlsq)
     print("Calculating SVM...")
-    class_acc_svm, acc_per_class_svm = onevall(X_faults_train, X_faults_reg, X_faults_test, lams=lams, classfxn=wlsvm)
+    class_acc_svm, acc_per_class_svm, not_used = onevall(X_faults_train, X_faults_reg, X_faults_test, lams=lams, classfxn=wlsvm)
+    class_acc_svm_training, _, _ = onevall(X_faults_train, X_faults_train, X_faults_train, lams=[0.0], classfxn=wlsvm)
     print("Calculating NN...")
     class_acc_nn, acc_per_class_nn = onevallNN(X_faults_train,X_faults_reg,X_faults_test)
+    class_acc_nn_training, _ = onevallNN(X_faults_train, X_faults_train, X_faults_train)
 
 
     print("\n\n------------------------------")
@@ -172,15 +179,69 @@ def compareMocap():
     print("-----------------------------------")
     print("Least Squares: ")
     print("Total Acc: ",class_acc_lsq)
+    print("Training Acc: ", class_acc_lsq_training)
     print(acc_per_class_lsq)
     print(" ")
     print("SVM: ")
     print("Total Acc: ", class_acc_svm)
+    print("Training Acc: ", class_acc_svm_training)
     print(acc_per_class_svm)
     print(" ")
     print("NN: ")
     print("Total Acc: ", class_acc_nn)
+    print("Training Acc: ", class_acc_nn_training)
     print(acc_per_class_nn)
+
+
+def l1_analysis():
+    X_faults = loadFaults()
+
+    X_faults_train = []
+    X_faults_test = []
+    X_faults_reg = []
+
+    # Split into test and training sets
+
+    for ii in range(0,len(X_faults)):
+        num_samps = np.shape(X_faults[ii])[0]
+        train_inds = np.random.choice(num_samps,int(0.60*num_samps),replace=False)
+        remaining_inds = np.array([i for i in range(0,num_samps) if i not in train_inds])
+        reg_inds = remaining_inds[np.random.choice(len(remaining_inds),int(0.50*len(remaining_inds)),replace=False)]
+        test_inds = np.array([i for i in range(0,num_samps) if i not in train_inds and i not in reg_inds])
+
+        X_faults_train.append(X_faults[ii][train_inds,:])
+        X_faults_test.append(X_faults[ii][test_inds,:])
+        X_faults_reg.append(X_faults[ii][reg_inds,:])
+
+    # Run for 10 regularization parameters
+    lams = [0.1]
+
+    print("Calculating LSQ l1...")
+    class_acc_lsq, acc_per_class_lsq, best_ws = onevall(X_faults_train, X_faults_reg, X_faults_test,lams=lams,classfxn=wlsqPGD)
+
+    print("\n\n------------------------------")
+    print("|       L1 Results                |")
+    print("-----------------------------------")
+    print("Least Squares: ")
+    print("Total Acc: ",class_acc_lsq)
+    print(acc_per_class_lsq)
+    print("---")
+
+    ws = best_ws[0].reshape((1,len(best_ws[0])))
+    for ii in range(1,len(best_ws)):
+        ws = np.concatenate((ws,best_ws[ii].reshape((1,len(best_ws[ii])))),axis=0)
+
+    print("Best Ws (mean + stddev):\n",list(np.mean(np.abs(ws),axis=0)),"\n",list(np.std(np.abs(ws),axis=0)))
+
+def state_of_the_art():
+    X_faults = loadFaults()
+    lam = [0.0]
+
+    print("\n\n------------------------")
+    print("| Clean Lab Analysis |")
+    print("------------------------")
+
+    crossValidation(X_faults, 5, lam, 'clab')
 
 def runEvaluations(testname):
     if testname == "genclass":
@@ -193,6 +254,10 @@ def runEvaluations(testname):
         compareNNTopology()
     elif testname == "mocap":
         compareMocap()
+    elif testname == "l1":
+        l1_analysis()
+    elif testname == 'sota':
+        state_of_the_art()
     else:
         print("Test [",testname,"] Not Found")
 

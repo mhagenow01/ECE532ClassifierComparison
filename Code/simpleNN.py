@@ -38,7 +38,7 @@ class MutliClassNN(nn.Module):
     def __init__(self,num_features,num_labels):
         super(MutliClassNN, self).__init__() # call default network constructor
         self.fc1 = torch.nn.Linear(num_features,1000)
-        self.fc2 = torch.nn.Linear(1000,1000)
+        # self.fc2 = torch.nn.Linear(1000,1000)
         self.fc3 = torch.nn.Linear(1000,num_labels)
     def forward(self,x):
         x = torch.relu(self.fc1(x))
