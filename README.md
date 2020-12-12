@@ -1,8 +1,15 @@
-# Classifier Comparison
+# A Comparison of Basic Classifiers for Classification ofSteel Plate Faults and Motion Capture Data
+#### Mike Hagenow
+Department of Mechanical Engineering - ECE 532 Final Project
 ### Summary
 In this work, the performance of several classifiers is assessed on two public datasets from the UCI repository: one involving fault detection on steel plates and one on gesture recognition in motion capture data.
 
-Datasets:
+![Fault in a Steel Plate](https://www.bactoforce.com/wp-content/uploads/2014/08/figure3.jpg)
+![Motion Capture on Hand](https://www.researchgate.net/profile/Xiaopeng_Yang3/publication/238693963/figure/fig1/AS:298744454107149@1448237636658/Marker-set-for-hand-motion-capture.png)
+
+(Examples of a fault in a plate and motion capture hand tracking. Sources: [Bactoforce](https://www.bactoforce.com/detection-biofilms/) and [ResearchGate](https://www.researchgate.net/figure/Marker-set-for-hand-motion-capture_fig1_238693963))
+
+Links to Datasets:
 * [Steel Plate Faults](https://archive.ics.uci.edu/ml/datasets/Steel+Plates+Faults)
 * [Motion Capture Hand Postures](https://archive.ics.uci.edu/ml/datasets/Motion+Capture+Hand+Postures)
 
