@@ -21,18 +21,18 @@ The classifers that are analyzed include:
 
 All of the executable code lies in the /Code/ directory and was written in Python3.
 
-The original datasets have been converted to csv files and are preprocessed into numpy-friendly arrays in the included PreProcessData.py scripts.
+The original datasets have been converted to csv files and are preprocessed into numpy-friendly arrays in the included PreProcessData.py script.
 
 PDF versions of project writeups are available in the /Documents/ directory
 
-#### Requirements
+### Requirements
 * Python 3 (tested on 3.6.9)
 * Numpy (tested on 1.18.5)
 * PyTorch
 * Cleanlab (https://github.com/cgnorthcutt/cleanlab)
 * sci-kit learn
 
-#### Usage
+### Usage
 NOTE: The code is tested using **Ubuntu 18.04**. The code for loading CSV files is based on a linux filesystem.
 For a different filesystem, minor changes may be required in **/Code/PreProcessData.py**.
 
@@ -54,7 +54,7 @@ on the LSQ and SVM methods
 **Also note: many of these scripts can take more than an hour to complete**
 
 
-#### Results
+### Results
 See the final report in the /Documents/ directory for a more thorough discussion.
 
 **Regression analysis using Steel Plate faults:**
