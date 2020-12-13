@@ -1,4 +1,4 @@
-# A Comparison of Basic Classifiers for Classification ofSteel Plate Faults and Motion Capture Data
+# A Comparison of Classifiers for Classification ofSteel Plate Faults and Motion Capture Data
 #### Mike Hagenow
 Department of Mechanical Engineering - ECE 532 Final Project
 ### Summary
