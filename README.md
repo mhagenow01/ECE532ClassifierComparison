@@ -62,7 +62,7 @@ See the final report in the /Documents/ directory for expanded discussion (what 
 |    | wLSQ | wSVM | NN|  
 | ------------- | ------------- | ------------- | ------------- |
 | Training Data  | 0.684  | 0.592* | 0.933 |
-| Cross Validation (n = 5)  | 0.585 | 0.567 | 0.583 |
+| Cross Validation (n = 5)  | 0.585 | 0.544 | 0.583 |
 
 (*) dependent on number of iterations of gradient descent. Similar to LSQ for a high number of iterations.
 
